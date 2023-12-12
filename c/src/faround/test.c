@@ -4,7 +4,7 @@
 #include <string.h>
 #include <regex.h>
 #define ARR_SIZE(x) (sizeof(x)/sizeof(x[0]))
-
+#define REGEX_STR ("[^\\/\\\\]*(.pdf)")
 char *extension="pdf";
 char *STORE_PATH = "/home/f5adff/.zath_library/files";
 
@@ -52,7 +52,7 @@ void push(Node** head_ref, void *new_data, size_t data_size)
 }
 
 char *  gettitle(char *data){
-        return apply_regex_to_string("[^\\/\\\\]*(.pdf)", data);
+        return apply_regex_to_string(REGEX_STR, data);
 }
 
 void PrintContentstoFile(Node *node,char *path)
@@ -111,7 +111,6 @@ int linkedlistlen(Node *node){
     return i;
 }
 
-
 void linkedtoarr(Node *node,char* arr[]){
 
     int i=0;
@@ -123,12 +122,9 @@ void linkedtoarr(Node *node,char* arr[]){
     }
 }
 
-
-
 int main(void){
     struct Node *pdfs = collectFiles("pdf");
     int len = linkedlistlen(pdfs);
-    //int longest = longestlink(pdfs);
     char *patharr[len];
     linkedtoarr(pdfs,patharr);
     for(int i=0; i<ARR_SIZE(patharr);i++){
