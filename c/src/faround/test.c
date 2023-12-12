@@ -123,13 +123,27 @@ void linkedtoarr(Node *node,char* arr[]){
 }
 
 int main(void){
-    struct Node *pdfs = collectFiles("pdf");
-    int len = linkedlistlen(pdfs);
-    char *patharr[len];
-    linkedtoarr(pdfs,patharr);
-    for(int i=0; i<ARR_SIZE(patharr);i++){
-       printf("%s",patharr[i]);
+
+
+    Node *pdfs = collectFiles("pdf");
+    int len = linkedlistlen(pdfs)+2;
+    char *choices[len];
+    linkedtoarr(pdfs,choices);
+    choices[len-2] = "Exit";
+    choices[len-1] = (char *)NULL;
+    for(int i = 0; i<len;i++){
+
+        printf("%d: %s\n",i,choices[i]);
     }
+
+
+   // struct Node *pdfs = collectFiles("pdf");
+   // int len = linkedlistlen(pdfs);
+   // char *patharr[len];
+   // linkedtoarr(pdfs,patharr);
+   // for(int i=0; i<ARR_SIZE(patharr);i++){
+   //    printf("%s",patharr[i]);
+   // }
 
 
 
