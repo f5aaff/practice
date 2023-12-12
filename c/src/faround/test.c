@@ -7,7 +7,7 @@
 
 char *extension="pdf";
 char *storePath = "bookies";
-char *STORE_PATH = "/home/james/.zath_library/files";
+char *STORE_PATH = "/home/f5adff/.zath_library/files";
 
 struct Node
 {
@@ -124,6 +124,45 @@ struct Node* ReadContentsFromFile(char *path){
     return start;
 }
 
+ struct Node* collectTitles(char *extension){
+    char *func = "find";
+    char *target = "~/";
+    int comlen = strlen(func)+strlen(target)+strlen(extension);
+    char command[comlen];
+    sprintf(command,"%s %s | grep -i \"\\.%s\"",func,target,extension);
+    FILE *cmd=popen(command,"r");
+    char res[1000]={0x0};
+    unsigned strsize = sizeof(char[1000]);
+    struct Node *start = NULL;
+    while (fgets(res, sizeof(res), cmd) !=NULL){
+        push(&start,res,strsize);
+    }
+
+    pclose(cmd);
+
+    return start;
+}
+
+
+int findLongestPath(){
+    char *command = "find ~/ -type f -print| grep -i \"\\.pdf\"  | awk '{print length($0)}' | sort -n";
+    FILE *cmd=popen(command,"r");
+    char res[1000]={0x0};
+    unsigned strsize = sizeof(char[10]);
+    int i = 0;
+    while(fgets(res, sizeof(res),cmd) != NULL){
+        char j = *(char *)res;
+        int k = j;
+
+        if(k>i){
+            i = k;
+            printf("%d\n",i);
+        }
+    }
+    return i;
+}
+
+
 struct Node* generateLibrary(struct Node *node){
 
     struct Node *libraryStart = NULL;
@@ -162,6 +201,9 @@ char *  To_Array(struct Node *head, int listlen) {
 }
 
 
+
+
+
 int main(void){
     struct Node *pdfs = collectFiles("pdf");
     PrintContentstoFile(pdfs,STORE_PATH);
@@ -174,13 +216,24 @@ int main(void){
     while(fgets(line,ARR_SIZE(line),fptr)!=NULL){
         char *path = line;
         char *title = apply_regex_to_string("[^\\/\\\\]*(.pdf)", path);
-
-        printf("%s",title);
-        strncpy(arrayOfDocs[i][0],path,3);
-        strncpy(arrayOfDocs[i][1],title,3);
-        i++;
+        if(title != NULL){
+            strcpy(arrayOfDocs[i][0],path);
+            strcpy(arrayOfDocs[i][1],title);
+            i++;
+        }
     }
+
+ //   for(int j=0; j < ARR_SIZE(arrayOfDocs); j++){
+ //       printf("%s: %ld",arrayOfDocs[j][0],strlen(arrayOfDocs[j][0]));
+ //       //printf("%s",arrayOfDocs[j][1]);
+ //   }
+    printf("%d",findLongestPath());
+
+
+
 }
+
+
 
 
 
