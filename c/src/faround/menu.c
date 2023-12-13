@@ -197,14 +197,13 @@ int main(){
 			case 10: /* Enter */
 				move(20, 0);
 				clrtoeol();
-
                 int id = item_index(current_item(my_menu));
+                char *current = choices[id];
 				mvprintw(20, 0, "Item selected is : %d: %s",
-					    id,choices[id]);
+					    id,current);
                 char *docview = "zathura";
-                char opencomm[strlen(docview)+strlen(choices[id])];
-                sprintf(opencomm,"%s %s &",docview,choices[id]);
-                mvprintw(10,0,"%s",opencomm);
+                char opencomm[strlen(docview)+strlen(current)];
+                sprintf(opencomm,"%s %s 2>&1 /dev/null",docview,current);
                 system(opencomm);
 				pos_menu_cursor(my_menu);
 				break;
