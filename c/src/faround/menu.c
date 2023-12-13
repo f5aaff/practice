@@ -140,8 +140,8 @@ int main(){
     ITEM **junk = (ITEM **)calloc(ARRAY_SIZE(choices) + 1, sizeof(ITEM *));
     for(int i=0 ;i<ARRAY_SIZE(choices);i++){
         if(i!=len-1){
-        junk[i] = new_item(choices[i], apply_regex_to_string(REGEX_STR,choices[i]));
-        printf("\n%s\n%s\n%s\n",choices[i],apply_regex_to_string(REGEX_STR,choices[i]),junk[i]->name);
+        junk[i] = new_item(apply_regex_to_string(REGEX_STR,choices[i]),choices[i]);
+        //printf("\n%s\n%s\n",choices[i],apply_regex_to_string(REGEX_STR,choices[i]));
         }else{
             junk[i] = new_item(choices[i],choices[i]);
         }
@@ -167,7 +167,7 @@ int main(){
 
         my_items = (ITEM **)calloc(n_choices + 1, sizeof(ITEM *));
         for(i = 0; i < n_choices; ++i)
-                my_items[i] = new_item(choices[i], choices[i]);
+                my_items[i] = new_item(apply_regex_to_string(REGEX_STR,choices[i]),choices[i]);
 	my_items[n_choices] = (ITEM *)NULL;
 	item_opts_off(my_items[3], O_SELECTABLE);
 	item_opts_off(my_items[6], O_SELECTABLE);
@@ -197,8 +197,15 @@ int main(){
 			case 10: /* Enter */
 				move(20, 0);
 				clrtoeol();
-				mvprintw(20, 0, "Item selected is : %s",
-						item_name(current_item(my_menu)));
+
+                int id = item_index(current_item(my_menu));
+				mvprintw(20, 0, "Item selected is : %d: %s",
+					    id,choices[id]);
+                char *docview = "zathura";
+                char opencomm[strlen(docview)+strlen(choices[id])];
+                sprintf(opencomm,"%s %s &",docview,choices[id]);
+                mvprintw(10,0,"%s",opencomm);
+                system(opencomm);
 				pos_menu_cursor(my_menu);
 				break;
 		}
