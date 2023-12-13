@@ -133,98 +133,80 @@ char *extensions[]={
 int main(){
 
     Node *pdfs = collectFiles("pdf");
-    int len = linkedlistlen(pdfs)+2;
+    int len = linkedlistlen(pdfs)+1;
     char *choices[len];
     linkedtoarr(pdfs,choices);
-    choices[len-2] = "Exit";
-    choices[len-1] = (char *)NULL;
-
-    ITEM **my_items;
-    MENU *app_menu;
-    WINDOW *app_win;
-    int n_choices, i;
-/*
- * initialise curses, the 'screen' of the application
- */
-    initscr();
-    start_color();
-    cbreak();
-    noecho();
-    keypad(stdscr, TRUE);
-    init_pair(1, COLOR_RED, COLOR_BLACK);
-    init_pair(2,COLOR_CYAN,COLOR_BLACK);
-
-
-/*
- * create the items based on the number of choices present, putting them in an array.
- */
-    n_choices = ARRAY_SIZE(choices);
-    ITEM** app_items = (ITEM **)calloc(n_choices, sizeof(ITEM *));
-    for(i=0; i<n_choices;i++){
-        app_items[i] = new_item(choices[i],choices[i]);
-        printf("%s",choices[i]);
-/*  }
- * create a menu, initialising it as taking item pointer pointers, and app items.
- */
-    app_menu = new_menu((ITEM **)app_items);
-
-    menu_opts_off(app_menu,0);
-
-/*
- * create the window for the application
- */
-    app_win = newwin(10, 70, 4, 4);
-    keypad(app_win, TRUE);
-
-    set_menu_win(app_menu,app_win);
-    set_menu_sub(app_menu, derwin(app_win, 6,68,3,1));
-
-    box(app_win, 0,0);
-
-    attron(COLOR_PAIR(2));
-    mvprintw(LINES -3,0,"Use Pgup & PgDown to Scroll");
-    mvprintw(LINES -3,0,"Use Arrow Keys to Navigate(F1 to Exit)");
-    attroff(COLOR_PAIR(2));
-    refresh();
-
-    post_menu(app_menu);
-    wrefresh(app_win);
-
-    int c = wgetch(app_win);
-    while((c = wgetch(app_win))  != KEY_F(1)){
-        switch(c){
-            case KEY_DOWN:
-                menu_driver(app_menu, REQ_DOWN_ITEM);
-                break;
-            case KEY_UP:
-                menu_driver(app_menu, REQ_UP_ITEM);
-                break;
-            case KEY_LEFT:
-                menu_driver(app_menu, REQ_LEFT_ITEM);
-                break;
-
-            case KEY_RIGHT:
-                menu_driver(app_menu, REQ_RIGHT_ITEM);
-                break;
-
-            case KEY_NPAGE:
-                menu_driver(app_menu, REQ_SCR_DPAGE);
-                break;
-
-            case KEY_PPAGE:
-                menu_driver(app_menu, REQ_SCR_UPAGE);
-                break;
+    choices[len-1] = "Exit";
+    ITEM **junk = (ITEM **)calloc(ARRAY_SIZE(choices) + 1, sizeof(ITEM *));
+    for(int i=0 ;i<ARRAY_SIZE(choices);i++){
+        if(i!=len-1){
+        junk[i] = new_item(choices[i], apply_regex_to_string(REGEX_STR,choices[i]));
+        printf("\n%s\n%s\n%s\n",choices[i],apply_regex_to_string(REGEX_STR,choices[i]),junk[i]->name);
+        }else{
+            junk[i] = new_item(choices[i],choices[i]);
         }
-        wrefresh(app_win);
     }
+    ITEM **my_items;
+	int c;
+	MENU *my_menu;
+        int n_choices, i;
+	ITEM *cur_item;
 
-    /*
-     * free up the memory taken
-     */
-    unpost_menu(app_menu);
-    free_menu(app_menu);
-    for(i=0; i< n_choices; i++)
-        free_item(app_items[i]);
-    endwin();
+	/* Initialize curses */
+	initscr();
+	start_color();
+        cbreak();
+        noecho();
+	keypad(stdscr, TRUE);
+	init_pair(1, COLOR_RED, COLOR_BLACK);
+	init_pair(2, COLOR_GREEN, COLOR_BLACK);
+	init_pair(3, COLOR_MAGENTA, COLOR_BLACK);
 
+	/* Initialize items */
+        n_choices = ARRAY_SIZE(choices);
+
+        my_items = (ITEM **)calloc(n_choices + 1, sizeof(ITEM *));
+        for(i = 0; i < n_choices; ++i)
+                my_items[i] = new_item(choices[i], choices[i]);
+	my_items[n_choices] = (ITEM *)NULL;
+	item_opts_off(my_items[3], O_SELECTABLE);
+	item_opts_off(my_items[6], O_SELECTABLE);
+
+	/* Create menu */
+	my_menu = new_menu((ITEM **)my_items);
+
+	/* Set fore ground and back ground of the menu */
+	set_menu_fore(my_menu, COLOR_PAIR(1) | A_REVERSE);
+	set_menu_back(my_menu, COLOR_PAIR(2));
+	set_menu_grey(my_menu, COLOR_PAIR(3));
+
+	/* Post the menu */
+	mvprintw(LINES - 3, 0, "Press <ENTER> to see the option selected");
+	mvprintw(LINES - 2, 0, "Up and Down arrow keys to naviage (F1 to Exit)");
+	post_menu(my_menu);
+	refresh();
+
+	while((c = getch()) != KEY_F(1))
+	{       switch(c)
+	        {	case KEY_DOWN:
+				menu_driver(my_menu, REQ_DOWN_ITEM);
+				break;
+			case KEY_UP:
+				menu_driver(my_menu, REQ_UP_ITEM);
+				break;
+			case 10: /* Enter */
+				move(20, 0);
+				clrtoeol();
+				mvprintw(20, 0, "Item selected is : %s",
+						item_name(current_item(my_menu)));
+				pos_menu_cursor(my_menu);
+				break;
+		}
+	}
+	unpost_menu(my_menu);
+	for(i = 0; i < n_choices; ++i)
+		free_item(my_items[i]);
+	free_menu(my_menu);
+	endwin();
 }
+
