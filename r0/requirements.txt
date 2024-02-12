@@ -1,0 +1,11 @@
+rpm
+cffi
+cryptography
+gmpy2
+gpg
+libcomps
+numpy
+scipy
+nacl
+pycparser
+Crypto
