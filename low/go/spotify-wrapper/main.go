@@ -34,16 +34,6 @@ type postRequest struct {
     body url.Values
 }
 
-//func sendPostRequest(req *postRequest,client http.Client)(*http.Response){
-//    endPoint := req.targetEndPoint
-//    body := req.body
-//    res, err := http.NewRequest("POST", endPoint,bytes.NewBuffer(body))
-//
-//    if err != nil {
-//        log.Fatal(err)
-//    }else{return res}
-//    return nil
-//}
 
 func sendGetRequest(req *getRequest,client http.Client)(*http.Response){
     endPoint := req.targetEndPoint
@@ -101,19 +91,22 @@ func sendPostRequest(req *postRequest,client http.Client)(*http.Response){
     //fmt.Println(r)
     return resp
     }
+
+
 func main() {
         client := http.Client{}
         accessToken := getToken(clientId,clientSecret,client)
 
         fmt.Println(accessToken)
 
-        //        getPlaylists := getRequest{
-//        targetEndPoint: "https://api.spotify.com/v1/users/",
-//        authorisation: accessToken,
-//        variable: "f5adff",
-//        value: "playlists",
-//    }
-//
-//    resp2 := sendGetRequest(&getPlaylists,client)
-//    fmt.Println(resp2)
+        getPlaylists := getRequest{
+        targetEndPoint: "https://api.spotify.com/v1/users/",
+        authorisation: fmt.Sprintf("Bearer %s",accessToken),
+        variable: "f5adff",
+        value: "playlists",
+    }
+    fmt. Printf("\n%#v\n", getPlaylists)
+    //fmt.Print('\n',getPlaylists,'\n')
+    //resp2 := sendGetRequest(&getPlaylists,client)
+    //fmt.Println(resp2)
 }
