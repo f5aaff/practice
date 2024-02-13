@@ -1,51 +1,61 @@
 package main
 
 import(
-    "encoding/json"
+//  "encoding/json"
     "fmt"
-    "io/ioutil"
+//  "io/ioutil"
     "log"
     "net/http"
-    //"os"
-    //"strconv"
+//  "os"
+//  "strconv"
 )
 
-//type caller interface{
-//    PostReq(*reqStruc)
-//    GetReq(*reqStruc)
-//}
+const  accessToken string = "Bearer dd8f644ef4074f7f82daca80487818b6"
 
-type reqStruct struct {
-    targetUrl string
-    info string
+
+type getRequest struct {
+    authorisation string `json:"Authorisation"`
+    targetEndPoint string
+    variable string
+    value any
 }
-func PostReq(reqStruc *reqStruct){
 
-    target := reqStruc.targetUrl
+type fetchRequest struct {
+    authorisation string `json:"Authorisation"`
+    targetEndPoint string
+    body string
 
-    response, err := http.Get(target)
+}
 
-    if err!=nil{
-        fmt.Print(err.Error())
+func sendGetRequest(req *getRequest,client http.Client)(*http.Response){
+    endPoint := req.targetEndPoint
+    body := fmt.Sprintf("%s/%s",req.variable,req.value)
+    call := fmt.Sprintf("%s/%s",endPoint,body)
+
+    request, err := http.NewRequest("GET",call,nil)
+    request.Header = http.Header{
+        "Authorisation": {accessToken},
     }
+    res, err := client.Do(request)
 
-    responseData, err := ioutil.ReadAll(response.Body)
     if err != nil {
         log.Fatal(err)
-        return
+        return nil
     }
-
-    json.Unmarshal(responseData,reqStruc.info)
-    //reqStruc.info = responseData
+    return res
 }
 
 func main() {
-    reqStruc :=  reqStruct{
-        targetUrl:"http://pokeapi.co/api/v2/pokedex/kanto/",
-        info: ""}
-    PostReq(&reqStruc)
-    fmt.Println(reqStruc.info)
-    //var s string;
-    //json.Unmarshal(reqStruc.info,s)
-    //fmt.Println(s)
+
+    getPlaylists := getRequest{
+        targetEndPoint: "https://api.spotify.com/v1/users/",
+        authorisation: accessToken,
+        variable: "f5adff",
+        value: "playlists",
+    }
+
+    client := http.Client{}
+    res := sendGetRequest(&getPlaylists,client)
+    fmt.Println(res)
+
 }
