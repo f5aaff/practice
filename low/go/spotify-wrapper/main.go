@@ -1,17 +1,18 @@
 package main
 
 import(
-//  "encoding/json"
     "fmt"
-//  "io/ioutil"
     "log"
     "net/http"
-//  "os"
-//  "strconv"
+    "net/url"
+    "bytes"
+    "encoding/json"
+    "io/ioutil"
 )
 
 const  accessToken string = "Bearer dd8f644ef4074f7f82daca80487818b6"
-
+const clientId string = "1b0ac2b304e941d9890dc016171c2226"
+const clientSecret string = "dd8f644ef4074f7f82daca80487818b6"
 
 type getRequest struct {
     authorisation string `json:"Authorisation"`
@@ -27,6 +28,23 @@ type fetchRequest struct {
 
 }
 
+type postRequest struct {
+    authorisation string `json:"Authorisation"`
+    targetEndPoint string
+    body url.Values
+}
+
+//func sendPostRequest(req *postRequest,client http.Client)(*http.Response){
+//    endPoint := req.targetEndPoint
+//    body := req.body
+//    res, err := http.NewRequest("POST", endPoint,bytes.NewBuffer(body))
+//
+//    if err != nil {
+//        log.Fatal(err)
+//    }else{return res}
+//    return nil
+//}
+
 func sendGetRequest(req *getRequest,client http.Client)(*http.Response){
     endPoint := req.targetEndPoint
     body := fmt.Sprintf("%s/%s",req.variable,req.value)
@@ -37,25 +55,65 @@ func sendGetRequest(req *getRequest,client http.Client)(*http.Response){
         "Authorisation": {accessToken},
     }
     res, err := client.Do(request)
-
     if err != nil {
         log.Fatal(err)
         return nil
+    }else{return res}
+    return nil
     }
-    return res
-}
 
+
+    func getToken(clientId string,clientSecret string, client http.Client)(string){
+        req := postRequest{
+            authorisation : "",
+            targetEndPoint: "https://accounts.spotify.com/api/token",
+            body : url.Values{
+            "grant_type":    {"client_credentials"},
+            "client_id":     {clientId},
+            "client_secret": {clientSecret},
+            },
+        }
+
+        resp := sendPostRequest(&req,client)
+        defer resp.Body.Close()
+
+        body,mapErr := ioutil.ReadAll(resp.Body)
+        var res map[string]interface{}
+        if mapErr != nil{
+            fmt.Println("error mapping string",mapErr)
+        }
+        jsonErr := json.Unmarshal(body, &res)
+        if jsonErr != nil{
+            fmt.Println("Error Parsing JSON:", jsonErr)
+        }
+        accessToken,ok := res["access_token"].(string)
+        if !ok {
+            fmt.Println("access token not found in response")
+        }
+        return accessToken
+
+    }
+func sendPostRequest(req *postRequest,client http.Client)(*http.Response){
+
+    r,_:=http.NewRequest("POST", req.targetEndPoint, bytes.NewBufferString(req.body.Encode()))
+    r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+    resp,_:=client.Do(r)
+    //fmt.Println(r)
+    return resp
+    }
 func main() {
+        client := http.Client{}
+        accessToken := getToken(clientId,clientSecret,client)
 
-    getPlaylists := getRequest{
-        targetEndPoint: "https://api.spotify.com/v1/users/",
-        authorisation: accessToken,
-        variable: "f5adff",
-        value: "playlists",
-    }
+        fmt.Println(accessToken)
 
-    client := http.Client{}
-    res := sendGetRequest(&getPlaylists,client)
-    fmt.Println(res)
-
+        //        getPlaylists := getRequest{
+//        targetEndPoint: "https://api.spotify.com/v1/users/",
+//        authorisation: accessToken,
+//        variable: "f5adff",
+//        value: "playlists",
+//    }
+//
+//    resp2 := sendGetRequest(&getPlaylists,client)
+//    fmt.Println(resp2)
 }
