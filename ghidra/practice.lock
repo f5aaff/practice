@@ -1,0 +1,9 @@
+#Ghidra Lock File
+#Sun Feb 18 14:23:10 GMT 2024
+OS\ Name=Linux
+OS\ Version=6.7.4-100.fc38.x86_64
+Username=james
+Hostname=cube-of-power
+<META>\ Supports\ File\ Channel\ Locking=Channel Lock
+OS\ Architecture=amd64
+Timestamp=2/18/24, 2\:23 PM

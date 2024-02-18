@@ -27,3 +27,10 @@
  - RAX is a "long" size register, sized at 64 bits. *qword ptr* denotes a pointer to a string's address in memory. In this case, the pointer is to stdout. Due to the change from 32-bit to 64-bit, rax is actually an extension of eax, which is an extension of ax- it's 16-bit predecessor. They are all the same register, so this is the same as writing to EAX.
  - This above line, and the MOV function below it, denote the start of the next function, fwrite.  
  
+ -the value '0x19' corresponds to the length of the string used in fwrite. the pointer previously mentioned, is from the function itself, as it writes to stdout. The values used in the logic for fwrite are moved into the needed registries, then an external call to fwrite is made, calling to it's thunk function to be executed. 
+ 
+ 
+ 
+### fio1()
+
+- 
