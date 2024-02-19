@@ -1,0 +1,11 @@
+[package]
+name = "ecdh-rust"
+version = "0.1.0"
+authors = ["JP Aumasson <jeanphilippe.aumasson@gmail.com>"]
+
+[[bin]]
+name = "ecdh"
+path = "ecdh.rs"
+
+[dependencies.sodiumoxide]
+version = "0.0.12"

@@ -10,11 +10,22 @@ import (
     "strings"
 )
 
+
+
+/*
+constants, client ID and secret grabbed from dev page on spotify for the api.
+*/
 const (
     spotifyAPIBaseURL = "https://api.spotify.com/v1"
     clientID          = "1b0ac2b304e941d9890dc016171c2226"
     clientSecret      = "dd8f644ef4074f7f82daca80487818b6"
-    redirectURI       = "localhost:8080"
+
+/*
+this is definitely wrong, despite being what was entered on the web page,
+either need to pick apart an existing wrapper and see what the hell they put,
+or bang head against wall until epiphany
+*/
+redirectURI       = "localhost:8080"
 )
 
 func main() {
@@ -57,6 +68,10 @@ func getAccessToken() (string, error) {
     if err != nil {
         return "", err
     }
+    /*
+    headers need to be set as such, auth is just the AccessToken
+    the content type needs to be form encoded, can't just hand it json afaik
+    */
     req.Header.Set("Authorization", "Basic "+authHeader)
     req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
@@ -75,7 +90,7 @@ func getAccessToken() (string, error) {
     }
 
     // Parse the JSON response
-    // (You should use a proper JSON library for production code)
+    // THIS IS DEFINITELY NOT A GOOD WAY TO PARSE JSON, WILDLY UNSAFE
     accessToken := string(body)
     return accessToken, nil
 }
@@ -97,7 +112,6 @@ func getUserProfile(token string) (*UserProfile, error) {
     defer resp.Body.Close()
 
     // Parse the JSON response
-    // (Again, use a proper JSON library in production)
     var userProfile UserProfile
     err = json.NewDecoder(resp.Body).Decode(&userProfile)
     if err != nil {
@@ -111,7 +125,6 @@ func getUserProfile(token string) (*UserProfile, error) {
 type UserProfile struct {
     ID           string `json:"id"`
     DisplayName  string `json:"display_name"`
-    // Add other relevant fields as needed
 }
 
 func getUserPlaylists(token string) ([]Playlist, error) {
