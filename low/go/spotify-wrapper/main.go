@@ -7,7 +7,9 @@ import (
     "fmt"
     "io/ioutil"
     "net/http"
+    "net/url"
     "strings"
+    "math/rand/v2"
 )
 
 
@@ -25,12 +27,19 @@ this is definitely wrong, despite being what was entered on the web page,
 either need to pick apart an existing wrapper and see what the hell they put,
 or bang head against wall until epiphany
 */
-redirectURI       = "localhost:8080"
+redirectURI          = "localhost:8080"
+
+letterBytes          = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 )
+
+
+
 
 func main() {
     // Get an access token
     token, err := getAccessToken()
+    http.HandleFunc("/login",userAuthRequest)
+    http.ListenAndServe(":8080",nil)
     if err != nil {
         fmt.Println("Error getting access token:", err)
         return
@@ -53,10 +62,16 @@ func main() {
     for playlist := range playlists{
         fmt.Println(playlist)
     }
+
 }
 
 
-
+func randString(n int) string{
+    b := make([]byte,n)
+    for i := range b {
+        b[i] = letterBytes[rand.Intn(len(letterBytes))]
+    }
+}
 
 func getAccessToken() (string, error) {
     // Base64 encode the client ID and secret
@@ -95,6 +110,21 @@ func getAccessToken() (string, error) {
     return accessToken, nil
 }
 
+func userAuthRequest(w http.ResponseWriter,r *http.Request){
+    state:= randString(16)
+    scope := "user-read-private user-read-email"
+    redirect := fmt.Sprintf("https://accounts.spotify.com/authorize?%s",
+        url.Values{
+            "response_type" : {"code"},
+            "client_id": {clientID},
+            "scope": {scope},
+            "redirect_uri": {redirectURI},
+            "state": {state},
+        }.Encode())
+    http.Redirect(w,r,redirect,http.StatusFound)
+}
+
+
 func getUserProfile(token string) (*UserProfile, error) {
     // Create a GET request to fetch the user profile
     req, err := http.NewRequest("GET", spotifyAPIBaseURL+"/me", nil)
@@ -126,6 +156,7 @@ type UserProfile struct {
     ID           string `json:"id"`
     DisplayName  string `json:"display_name"`
 }
+
 
 func getUserPlaylists(token string) ([]Playlist, error) {
     // Create a GET request to fetch user playlists
