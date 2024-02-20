@@ -9,7 +9,7 @@ import (
     "net/http"
     "net/url"
     "strings"
-    "math/rand/v2"
+    "math/rand"
 )
 
 
@@ -71,6 +71,7 @@ func randString(n int) string{
     for i := range b {
         b[i] = letterBytes[rand.Intn(len(letterBytes))]
     }
+    return string(b)
 }
 
 func getAccessToken() (string, error) {
