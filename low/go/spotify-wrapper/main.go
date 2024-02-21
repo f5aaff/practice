@@ -34,16 +34,44 @@ letterBytes          = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 
 
+	http.HandleFunc("/callback", callbackHandler)
+	http.HandleFunc("/token", tokenHandler)
+
+	go func() {
+		fmt.Println("Opening the Spotify Login Dialog in your browser...")
+		err := exec.Command("xdg-open", URL).Run() // macOS open command
+		if err != nil {
+			log.Println("Error opening browser:", err)
+		}
+	}()
+
+
+
+	err := http.ListenAndServe(fmt.Sprintf(":%d", PORT), nil)
+	if err != nil {
+		log.Fatal("Error starting server:", err)
+	}
+}
 
 func main() {
     // Get an access token
     token, err := getAccessToken()
-    http.HandleFunc("/login",userAuthRequest)
-    http.ListenAndServe(":8080",nil)
-    if err != nil {
-        fmt.Println("Error getting access token:", err)
-        return
-    }
+   	http.HandleFunc("/callback", callbackHandler)
+	http.HandleFunc("/token", tokenHandler)
+	go func() {
+		fmt.Println("Opening the Spotify Login Dialog in your browser...")
+		err := exec.Command("xdg-open", URL).Run() // macOS open command
+		if err != nil {
+			log.Println("Error opening browser:", err)
+		}
+	}()
+
+	err := http.ListenAndServe(fmt.Sprintf(":%d", PORT), nil)
+	if err != nil {
+		log.Fatal("Error starting server:", err)
+	}
+}
+
     // Example: Get a user's profile
     userProfile, err := getUserProfile(token)
     if err != nil {
@@ -224,6 +252,29 @@ func getRefreshToken(authCode string) (string, error) {
 
     return tokenResponse.RefreshToken, nil
 }
+
+func callbackHandler(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "callback.html")
+	if r.URL.Query().Get("error") != "" {
+		log.Printf("Something went wrong. Error: %s", r.URL.Query().Get("error"))
+	}
+}
+
+func tokenHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	token := r.URL.Query().Get("access_token")
+	if token != "" {
+		cmd := exec.Command("setclip") // macOS clipboard command
+		cmd.Stdin = strings.NewReader(token)
+		if err := cmd.Run(); err != nil {
+			log.Println("Error copying token to clipboard:", err)
+		}
+		fmt.Println("Your token is:", token)
+		fmt.Println("(It has been copied to your clipboard)")
+	}
+	os.Exit(0)
+}
+
 // Define a struct to hold playlist data
 type Playlist struct {
     ID   string `json:"id"`

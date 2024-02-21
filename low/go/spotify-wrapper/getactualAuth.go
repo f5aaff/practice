@@ -56,8 +56,10 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 func tokenHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	token := r.URL.Query().Get("access_token")
+	fmt.Println("Your token is:", token)
 	if token != "" {
-		cmd := exec.Command("setclip") // macOS clipboard command
+        log.Println("token?",token)
+		cmd := exec.Command("testingblankmakeerror") // macOS clipboard command
 		cmd.Stdin = strings.NewReader(token)
 		if err := cmd.Run(); err != nil {
 			log.Println("Error copying token to clipboard:", err)
@@ -79,6 +81,8 @@ func main() {
 			log.Println("Error opening browser:", err)
 		}
 	}()
+
+
 
 	err := http.ListenAndServe(fmt.Sprintf(":%d", PORT), nil)
 	if err != nil {
