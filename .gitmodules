@@ -4,6 +4,3 @@
 [submodule "stolenCode/spotify"]
 	path = "stolenCode/spotify"
     url = "https://github.com/zmb3/spotify"
-[submodule "notes"]
-    path = "notes"
-    url = "git@github.com:f5aaff/notes"
