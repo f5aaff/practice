@@ -1,6 +1,6 @@
 [submodule "web"]
-    path = "web"
-    url = "git@github.com:f5aaff/webPrac"
+	path = web
+	url = git@github.com:f5aaff/webPrac
 [submodule "stolenCode/spotify"]
 	path = "stolenCode/spotify"
     url = "https://github.com/zmb3/spotify"
