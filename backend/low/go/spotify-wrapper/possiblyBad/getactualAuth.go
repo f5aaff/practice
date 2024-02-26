@@ -74,8 +74,9 @@ func main() {
 
 	go func() {
 		fmt.Println("Opening the Spotify Login Dialog in your browser...")
-		err := exec.Command("xdg-open", URL).Run() // macOS open command
-		if err != nil {
+		//err := exec.Command("xdg-open", URL).Run() // macOS open command
+        err := exec.Command("xdg-open", URL).Run()
+        if err != nil {
 			log.Println("Error opening browser:", err)
 		}
 	}()
