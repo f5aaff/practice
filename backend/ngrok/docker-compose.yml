@@ -1,0 +1,8 @@
+services:
+  ngrok-tunnel:
+    image: ngrok/ngrok:latest
+    restart: unless-stopped
+    volumes:
+      - /home/f5adff/.ngrok2:/ngrok
+    ports:
+      - 8080:8080

@@ -5,6 +5,8 @@ import com.github.alexdlaird.ngrok.conf.JavaNgrokConfig;
 import com.github.alexdlaird.ngrok.protocol.CreateTunnel;
 import com.github.alexdlaird.ngrok.protocol.Tunnel;
 import com.github.alexdlaird.ngrok.protocol.TunnelOAuth;
+import com.github.alexdlaird.ngrok.protocol.Proto;
+import com.github.alexdlaird.ngrok.protocol.BindTls;
 
 import java.nio.file.Path;
 
@@ -22,10 +24,10 @@ public class Main {
                 .withProvider("google")
                 .build();
         CreateTunnel createTunnel = new CreateTunnel.Builder()
+                .withProto(Proto.TCP)
                 .withAddr("http://localhost:8080")
                 .withOAuth(tunnelOAuth)
                 .build();
-        ;
         Tunnel tunnel = ngrokClient.connect(createTunnel);
         String pubUrl = tunnel.getPublicUrl();
         System.out.println(pubUrl);
