@@ -1,2 +1,4 @@
 backend/java/spring/ngrok/oauth/ngrokNonsense/.idea
 stolenCode/
+stolenCode/*
+stolenCode
