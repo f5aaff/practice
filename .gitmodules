@@ -1,9 +1,6 @@
 [submodule "web"]
 	path = web
 	url = git@github.com:f5aaff/webPrac
-[submodule "stolenCode/spotify"]
-	path = stolenCode/spotify
-	url = git@github.com:zmb3/spotify
 [submodule "notes"]
 	path = notes
 	url = git@github.com:f5aaff/notes
