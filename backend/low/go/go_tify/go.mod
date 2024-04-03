@@ -1,4 +1,4 @@
-module github.com/f5aaff/go-tify
+module github.com/f5aaff/go_tify
 
 go 1.18
 
