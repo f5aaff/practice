@@ -1,11 +1,24 @@
 package org.example;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 public class Main {
 
+    final String[] FIELDS = new String[]{
+            "CONNECTED",
+            "BSSID",
+            "SSID",
+            "MODE",
+            "CHAN",
+            "RATE",
+            "SIGNAL",
+            "BARS",
+            "SECURITY"
+    };
     private static String[] readFile(String file) throws IOException {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
@@ -24,17 +37,18 @@ public class Main {
     }
     public static String formatToJson(String raw) {
         if (raw != null) {
-            String[] splitRaw = raw.split("\n");
-            raw = "{'" + raw + "',}\n";
             //replace connected '*' with TRUE, blank with FALSE
-            raw = raw.replaceAll("\\*:","TRUE:")
-                    .replaceAll("\\s:", "FALSE:")
+            raw = raw.replaceAll("\\*:","{'TRUE:")
+                    .replaceAll("\\s:", "{'FALSE:")
+                    .replaceAll("\n","'}\n")
                     //replace address ':' with '@' for meantime
                     .replaceAll("\\\\:","@")
                     //replace ':' delimiter with valid json delimit
                     .replaceAll(":","','")
                     //sub ':' back in for '_' placeholder
                     .replaceAll("@",":");
+
+            List<String> vals = List.of(raw.split("\n"));
 
             return raw;
         }
@@ -47,6 +61,7 @@ public class Main {
             //replace connected '*' with TRUE, blank with FALSE
             line = line.replaceAll("\\*:","TRUE:")
                     .replaceAll("\\s:", "FALSE:")
+
                     //replace address ':' with '@' for meantime
                     .replaceAll("\\\\:","@")
                     //replace ':' delimiter with valid json delimit
@@ -71,7 +86,6 @@ public static String getOutput() throws IOException, InterruptedException {
     while ((stdOutput.readLine())!= null) {
         String line = stdOutput.readLine();
         if (line != null) {
-
             line = "'" + line + "'";
             //replace connected '*' with TRUE, blank with FALSE
             line = line.replaceAll("\\*:","TRUE:")
@@ -98,7 +112,8 @@ public static String getOutput() throws IOException, InterruptedException {
     public static void main(String[] args) throws IOException, InterruptedException {
     String[] res = readFile("thisIsATestFile");
     String raw = res[0];
-
+    System.out.println(raw);
+    System.out.println(formatToJson(raw));
 
     }
 }
