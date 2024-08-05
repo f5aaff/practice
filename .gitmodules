@@ -26,3 +26,6 @@
 [submodule "backend/low/rust/passrus"]
 	path = backend/low/rust/passrus
 	url = git@github.com:f5aaff/passrus.git
+[submodule "backend/low/rust/rustlings"]
+	path = backend/low/rust/rustlings
+	url = https://github.com/rust-lang/rustlings.git
