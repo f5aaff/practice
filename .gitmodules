@@ -7,3 +7,9 @@
 [submodule "backend/low/go/spotify-wrappinator"]
 	path = backend/low/go/spotify-wrappinator
 	url = git@github.com:f5aaff/spotify-wrappinator
+[submodule "cSharp"]
+	path = cSharp
+	url = git@github.com:f5aaff/cSharp.git
+[submodule "backend/low/cSharp"]
+	path = backend/low/cSharp
+	url = git@github.com:f5aaff/cSharp.git
