@@ -23,3 +23,6 @@
 [submodule "backend/low/go/gootify_cli"]
 	path = backend/low/go/gootify_cli
 	url = git@github.com:f5aaff/gootify_cli.git
+[submodule "backend/low/rust/passrus"]
+	path = backend/low/rust/passrus
+	url = git@github.com:f5aaff/passrus.git
