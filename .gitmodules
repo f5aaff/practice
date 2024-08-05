@@ -12,4 +12,14 @@
 	url = git@github.com:f5aaff/cSharp.git
 [submodule "backend/low/cSharp"]
 	path = backend/low/cSharp
-	url = git@github.com:f5aaff/cSharp.git
+    url = git@github.com:f5aaff/cSharp.git
+[submodule "backend/low/go/gootify"]
+    path = "backend/low/go/gootify/"
+    url = git@github.com:f5aaff/gootify.git
+[submodule "backend/low/go/gootify_tui"]
+    path = "backend/low/go/gootify_tui/"
+    url = git@github.com:f5aaff/gootify_tui.git
+[submodule "backend/low/go/gootify_cli"]
+    path = "backend/low/go/gootify_cli/"
+    url = git@github.com:f5aaff/gootify_cli.git
+
